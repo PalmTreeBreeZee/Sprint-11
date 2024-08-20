@@ -17,13 +17,35 @@ export default function LoginForm(props) {
   const onSubmit = evt => {
     evt.preventDefault()
     // ✨ implement
+   fetch('http://localhost:9000/api/login', {
+      method: 'POST',
+      body: JSON.stringify({
+        username: values.username,
+        password: values.password
+      }),
+      headers: {
+        'Content-type': 'application/json'
+      }
+    })
+    .then(res =>{
+      if(!res.ok) throw new Error(`Something went wrong: ${res.status}`)
+      const data = res.json()
+      return data
+    })
+    .then(data => console.log('Success: ', data))
+    .catch(err => console.log('Whoops :', err.message))
   }
-
+  
   const isDisabled = () => {
     // ✨ implement
     // Trimmed username must be >= 3, and
     // trimmed password must be >= 8 for
     // the button to become enabled
+    
+    console.log(evt)
+    if(values.username.length >= 3 && values.password.length >= 8){
+      
+    }
   }
 
   return (
