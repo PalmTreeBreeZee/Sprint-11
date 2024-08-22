@@ -35,6 +35,7 @@ export default function App() {
       localStorage.setItem('token', '')
     }
     navigate('/')
+    setMessage('Goodbye!')
   }
   
   const login = ({ username, password }) => {
@@ -58,6 +59,8 @@ export default function App() {
     })
       .then(res => {
         //I need to set the spinner
+        
+        if(!res.ok) throw new Error(setMessage(res.statusText))
         const data = res.json()
         return data
       })
@@ -69,8 +72,9 @@ export default function App() {
         console.log('Success: ', data)
       })
       .catch(err => {
-        console.log('Whoops :', err.message)
         setSpinnerOn(false)
+        redirectToLogin()
+        console.log(message)
       })
       console.log(localStorage.getItem('token'))
   }
@@ -85,19 +89,21 @@ export default function App() {
     // if it's a 401 the token might have gone bad, and we should redirect to login.
     // Don't forget to turn off the spinner!
     setSpinnerOn(true)
+    setMessage('')
     fetch(articlesUrl, {
       headers: {
         Authorization: localStorage.getItem('token')
       }
     })
       .then(res =>{
-    
+       
        setSpinnerOn(false)
        return res.json()   
       })
       .then(data => {
         setSpinnerOn(false)
         setArticles(data.articles)
+        setMessage(data.message)
       })
       .catch(err =>{
         console.log(err.message)
