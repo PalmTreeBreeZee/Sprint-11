@@ -8,11 +8,6 @@ export default function Articles(props) {
   // ✨ implement conditional logic: if no token exists
   // we should render a Navigate to login screen (React Router v.6)
  
-  //IDK if this works????
-  if(localStorage.getItem('token') == ''){
-    Navigate('/')
-    console.log('hello')
-  }
   useEffect(() => {
     // ✨ grab the articles here, on first render only
     
@@ -23,8 +18,10 @@ export default function Articles(props) {
     // ✨ fix the JSX: replace `Function.prototype` with actual functions
     // and use the articles prop to generate articles
     <div className="articles">
+    {!articles && <Navigate to='/' />}
       <h2>Articles</h2>
       {
+        
         articles?.length === undefined
           ? 'No articles yet'
           : articles.map(art => {

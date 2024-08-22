@@ -51,7 +51,6 @@ export default function App() {
       body: JSON.stringify({
         username,
         password,
-
       }),
       headers: {
         'Content-type': 'application/json'
