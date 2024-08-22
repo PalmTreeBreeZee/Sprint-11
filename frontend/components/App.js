@@ -31,9 +31,12 @@ export default function App() {
     // and a message saying "Goodbye!" should be set in its proper state.
     // In any case, we should redirect the browser back to the login screen,
     // using the helper above.
-    
+    if(localStorage.getItem('token') !== ''){
+      localStorage.setItem('token', '')
+    }
+    navigate('/')
   }
-
+  
   const login = ({ username, password }) => {
     // ✨ implement
     // We should flush the message state, turn on the spinner
@@ -41,8 +44,8 @@ export default function App() {
     // On success, we should set the token to local storage in a 'token' key,
     // put the server success message in its proper state, and redirect
     // to the Articles screen. Don't forget to turn off the spinner!
-    console.log(username, password)
-    fetch('http://localhost:9000/api/login', {
+    setSpinnerOn(true)
+    fetch(loginUrl, {
       method: 'POST',
       body: JSON.stringify({
         username,
@@ -62,12 +65,14 @@ export default function App() {
         setMessage(data.message)
         localStorage.setItem('token', data.token)
         redirectToArticles()
+        setSpinnerOn(false)
         console.log('Success: ', data)
       })
       .catch(err => {
         console.log('Whoops :', err.message)
+        setSpinnerOn(false)
       })
-
+      console.log(localStorage.getItem('token'))
   }
 
   const getArticles = () => {
@@ -79,17 +84,25 @@ export default function App() {
     // If something goes wrong, check the status of the response:
     // if it's a 401 the token might have gone bad, and we should redirect to login.
     // Don't forget to turn off the spinner!
-    fetch(articlesUrl)
+    setSpinnerOn(true)
+    fetch(articlesUrl, {
+      headers: {
+        Authorization: localStorage.getItem('token')
+      }
+    })
       .then(res =>{
-        
-       
-          
+    
+       setSpinnerOn(false)
+       return res.json()   
       })
       .then(data => {
-        
+        setSpinnerOn(false)
+        setArticles(data.articles)
       })
       .catch(err =>{
-
+        console.log(err.message)
+        setSpinnerOn(false)
+        
       })
   }
 
@@ -112,8 +125,8 @@ export default function App() {
   return (
     // ✨ fix the JSX: `Spinner`, `Message`, `LoginForm`, `ArticleForm` and `Articles` expect props ❗
     <>
-      <Spinner />
-      <Message />
+      <Spinner on={spinnerOn}/>
+      <Message message={message}/>
       <button id="logout" onClick={logout}>Logout from app</button>
       <div id="wrapper" style={{ opacity: spinnerOn ? "0.25" : "1" }}> {/* <-- do not change this line */}
         <h1>Advanced Web Applications</h1>
